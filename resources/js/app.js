@@ -11,6 +11,9 @@ window.Fire = new Vue();
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
+import Gate from "./Gate";
+Vue.prototype.$gate = new Gate(window.user);
+
 import {
   Form,
   HasError,
@@ -36,18 +39,18 @@ const options = {
 };
 Vue.use(VueProgressBar, options);
 
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 window.Swal = Swal;
 const Toast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: "top-end",
   showConfirmButton: false,
   timer: 3000,
   timerProgressBar: true,
   onOpen: (toast) => {
-    toast.addEventListener('mouseenter', Swal.stopTimer)
-    toast.addEventListener('mouseleave', Swal.resumeTimer)
-  }
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  },
 });
 window.Toast = Toast;
 
@@ -77,6 +80,10 @@ let routes = [{
     path: "/users",
     component: require("./components/Users.vue").default,
   },
+  {
+    path: "*",
+    component: require("./components/NotFound.vue").default,
+  },
 ];
 
 const router = new VueRouter({
@@ -90,21 +97,15 @@ const router = new VueRouter({
 
 Vue.component("example-component", require("./components/ExampleComponent.vue").default);
 
+Vue.component("not-found", require("./components/NotFound.vue").default);
+Vue.component("pagination", require("laravel-vue-pagination"));
+
 // ? Using Laravel Passport to create an API auth in Vue components
-Vue.component(
-  'passport-clients',
-  require('./components/passport/Clients.vue').default
-);
+Vue.component("passport-clients", require("./components/passport/Clients.vue").default);
 
-Vue.component(
-  'passport-authorized-clients',
-  require('./components/passport/AuthorizedClients.vue').default
-);
+Vue.component("passport-authorized-clients", require("./components/passport/AuthorizedClients.vue").default);
 
-Vue.component(
-  'passport-personal-access-tokens',
-  require('./components/passport/PersonalAccessTokens.vue').default
-);
+Vue.component("passport-personal-access-tokens", require("./components/passport/PersonalAccessTokens.vue").default);
 
 //  * Next, we will create a fresh Vue application instance and attach it to
 //  * the page. Then, you may begin adding components to this application
@@ -113,4 +114,15 @@ Vue.component(
 const app = new Vue({
   el: "#app",
   router,
+  data: {
+    search: "",
+  },
+  methods: {
+    searchit: _.debounce(() => {
+      Fire.$emit('searching')
+    }, 1000),
+    printInvoice() {
+      window.print()
+    }
+  },
 });

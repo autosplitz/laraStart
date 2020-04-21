@@ -28,37 +28,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+        <input v-model="search" @keyup="searchit" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
+          <button class="btn btn-navbar" @click="searchit">
             <i class="fas fa-search"></i>
           </button>
         </div>
       </div>
-    </form>
   </nav>
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <router-link to="/home" class="brand-link">
       <img src="./img/logo1.png" alt="Lara Start Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
       <span class="brand-text font-weight-light">Lara Start</span>
-    </a>
+    </router-link>
 
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="./img/user.png" class="img-circle elevation-2" alt="User Image">
+          <img src="./img/profile/{{ Auth::user()->photo }}" class="img-circle elevation-2" alt="User Image">
         </div>
-        <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+        <div class="float-left info">
+          <a href="#" class="d-block">{{ Auth::user()->name }}<small class="d-block"> <i class="fas fa-circle text-success"></i> {{ Auth::user()->type }}</small></a>
         </div>
       </div>
 
@@ -76,6 +74,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </router-link>
           </li>
+          @can('isAdmin')
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cog green"></i>
@@ -91,15 +90,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <p>Users</p>
                 </router-link>
               </li>
-              {{-- <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="fas fa-circle nav-icon"></i>
-                  <p>Inactive Page</p>
-                </a>
-              </li> --}}
             </ul>
           </li>
-          <li class="nav-item">
+            <li class="nav-item">
             <router-link to="/developer" class="nav-link">
               <i class="nav-icon fas fa-cogs"></i>
               <p>
@@ -107,6 +100,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </p>
             </router-link>
           </li>
+          @endcan
+          
           <li class="nav-item">
             <router-link to="/profile" class="nav-link">
               <i class="nav-icon fas fa-user orange"></i>
@@ -171,6 +166,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </div>
 <!-- ./wrapper -->
 
+@auth
+<script>
+  window.user = @json(auth()->user());
+</script>
+@endauth
 <!-- REQUIRED SCRIPTS -->
 <script src="/js/app.js"></script>
 </body>
